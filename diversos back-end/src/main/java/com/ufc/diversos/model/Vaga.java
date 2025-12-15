@@ -18,28 +18,70 @@ public class Vaga {
 
     @NotBlank(message = "Título é obrigatório")
     @Column(nullable = false)
-    private String titulo; // Deixar o Hibernate inferir VARCHAR
+    private String titulo;
 
     @NotBlank(message = "Descrição é obrigatória")
-    // Forçar TEXT apenas aqui, onde o erro 'bytea' se manifestou.
+    // 💡 CORREÇÃO 1: Forçar 'TEXT' para evitar o erro 'lower(bytea) does not exist' no PostgreSQL.
     @Column(nullable = false, columnDefinition = "TEXT")
     private String descricao;
 
     @NotBlank(message = "Empresa é obrigatória")
     @Column(nullable = false)
-    private String empresa; // Deixar o Hibernate inferir VARCHAR
+    private String empresa;
 
-    // Removi 'nullable = true' pois o @NotBlank exige que seja NOT NULL
     @NotBlank(message = "Link da Vaga é obrigatória")
+    // 💡 CORREÇÃO 2: Se tem @NotBlank, não pode ser nullable = true. Deve ser false.
+    // Alterei para nullable=false para consistência, mas se for opcional, remova o @NotBlank.
     @Column(nullable = false)
     private String linkDaVaga;
 
     @NotBlank(message = "Cidade é obrigatória")
     @Column(nullable = false)
-    private String cidade; // Deixar o Hibernate inferir VARCHAR
+    private String cidade;
 
     @NotBlank(message = "Estado é obrigatório")
     @Column(nullable = false)
-    private String estado; // Deixar o Hibernate inferir VARCHAR
+    private String estado;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @Column(nullable = false)
+    private LocalDateTime dataCriacao;
+
+    @Column(nullable = true)
+    private LocalDateTime dataLimite; // Não alterado, é opcional.
+
+    @NotNull(message = "Status da Vaga é obrigatório")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusVaga status;
+
+    @NotNull(message = "Tipo da Vaga é obrigatório")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoVaga tipo;
+
+    @NotNull(message = "Modalidade da Vaga é obrigatório")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ModalidadeVaga modalidade;
+
+    // Enums mantidos aninhados:
+
+    public enum StatusVaga {
+        ATIVA,
+        PREENCHIDA
+    }
+
+    public enum TipoVaga {
+        AFIRMATIVA,
+        NAO_AFIRMATIVA,
+        EDITAL,
+        NAO_EDITAL
+    }
+
+    public enum ModalidadeVaga {
+        PRESENCIAL,
+        REMOTO,
+        HIBRIDO
+    }
 }
