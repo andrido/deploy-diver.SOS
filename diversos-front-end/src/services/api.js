@@ -30,7 +30,8 @@ export const getJobOpenings = async () => {
 }
 
 export const searchJobOpenings = async (params) => {
-  const response = await api.get("/vagas/buscar", { params });
+  // ATUALIZADO DE "/vagas/buscar" para "/vagas/filtro"
+  const response = await api.get("/vagas/filtro", { params });
   console.log(response)
   const transformedData = response.data.map(transformJob);
   return { ...response, data: transformedData };
