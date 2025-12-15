@@ -1,3 +1,16 @@
+-- 🚨 GARANTE QUE O BANCO ESTEJA LIMPO ANTES DE INSERIR DADOS DE TESTE 🚨
+-- TRUNCATE TABLE: Limpa todos os dados
+-- RESTART IDENTITY: Zera o contador de ID incremental (sequence)
+-- CASCADE: Garante que as tabelas com chaves estrangeiras (FK) também sejam limpas (como usuarios_vagas_salvas)
+
+TRUNCATE TABLE usuarios RESTART IDENTITY CASCADE;
+TRUNCATE TABLE noticia RESTART IDENTITY CASCADE;
+TRUNCATE TABLE vaga RESTART IDENTITY CASCADE;
+
+-- A tabela usuarios_vagas_salvas será limpa pelo CASCADE, mas é bom garantir
+TRUNCATE TABLE usuarios_vagas_salvas RESTART IDENTITY;
+
+
 -- DADOS PARA A TABELA `usuarios`
 INSERT INTO usuarios (id, cpf, email, bairro, cep, cidade, complemento, estado, numero, rua, nome, senha, status, telefone, tipo_de_usuario, username) VALUES
 (7,'00000000000','x@x.com','jardim guanabara','60346245','Fortaleza','esquina com Major Assis','Cear├í','700','Rosa Leite de Oliveira','zezin da silva','$2a$10$0v24GTJt/zRGLlq0Q4Bgw.4.F4o4L00bVVJyr9Tgb3BdUiRQHGV4C',NULL,'8599999999','MODERADOR','zedelivery'),
