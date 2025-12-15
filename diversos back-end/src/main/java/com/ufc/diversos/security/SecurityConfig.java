@@ -40,7 +40,7 @@ public class SecurityConfig {
                         // --- ROTAS PÚBLICAS ---
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Criar conta é público
-                        .requestMatchers(HttpMethod.GET, "/vagas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/vagas", "/vagas/buscar").permitAll() // Liberação explícita
                         .requestMatchers(HttpMethod.GET, "/noticias/**").permitAll()
 
                         // --- ROTAS DO USUÁRIO LOGADO (MEU PERFIL) ---
