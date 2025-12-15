@@ -54,7 +54,7 @@ public class VagaController {
                 : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/buscar")
+    @GetMapping("/filtro")
     public List<Vaga> buscarVagas(
             @RequestParam(required = false) String termo,
             @RequestParam(required = false) Vaga.ModalidadeVaga modalidade,
