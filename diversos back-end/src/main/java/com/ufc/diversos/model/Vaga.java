@@ -21,7 +21,7 @@ public class Vaga {
     private String titulo;
 
     @NotBlank(message = "Descrição é obrigatória")
-    // 💡 CORREÇÃO 1: Forçar 'TEXT' para evitar o erro 'lower(bytea) does not exist' no PostgreSQL.
+    // ESSENCIAL: Força o tipo TEXT no PostgreSQL para evitar o erro 'bytea'
     @Column(nullable = false, columnDefinition = "TEXT")
     private String descricao;
 
@@ -30,8 +30,7 @@ public class Vaga {
     private String empresa;
 
     @NotBlank(message = "Link da Vaga é obrigatória")
-    // 💡 CORREÇÃO 2: Se tem @NotBlank, não pode ser nullable = true. Deve ser false.
-    // Alterei para nullable=false para consistência, mas se for opcional, remova o @NotBlank.
+    // CORRIGIDO: Se é @NotBlank, deve ser nullable=false.
     @Column(nullable = false)
     private String linkDaVaga;
 
@@ -48,7 +47,7 @@ public class Vaga {
     private LocalDateTime dataCriacao;
 
     @Column(nullable = true)
-    private LocalDateTime dataLimite; // Não alterado, é opcional.
+    private LocalDateTime dataLimite;
 
     @NotNull(message = "Status da Vaga é obrigatório")
     @Enumerated(EnumType.STRING)
@@ -66,7 +65,6 @@ public class Vaga {
     private ModalidadeVaga modalidade;
 
     // Enums mantidos aninhados:
-
     public enum StatusVaga {
         ATIVA,
         PREENCHIDA
