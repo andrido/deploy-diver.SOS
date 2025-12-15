@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,38 +33,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable()) // 1. CRÍTICO: Desabilita CSRF para permitir o POST do CURL
+        http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
                         // --- ROTAS PÚBLICAS ---
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Criar conta é público
                         .requestMatchers(HttpMethod.GET, "/vagas/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/vagas/buscar").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/vagas/{id}").permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/noticias/**").permitAll()
-
-                        // 2. LIBERAÇÃO TEMPORÁRIA: Permite POST /vagas sem autenticação
-                        .requestMatchers(HttpMethod.POST, "/vagas/**").permitAll()
 
                         // --- ROTAS DO USUÁRIO LOGADO (MEU PERFIL) ---
                         .requestMatchers("/usuarios/me/**").authenticated()
+
+
                         .requestMatchers(HttpMethod.PUT, "/usuarios/**").authenticated()
 
                         // --- ROTAS RESTRITAS (ADMIN/MOD) ---
-                        // 3. CORREÇÃO PERMANENTE: Troca hasAnyRole por hasAnyAuthority em TODAS as restrições
-                        // Isso usa o nome exato do perfil do banco (ADMINISTRADOR, MODERADOR)
-                        .requestMatchers(HttpMethod.GET, "/usuarios").hasAnyAuthority("ADMINISTRADOR", "MODERADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasAnyAuthority("ADMINISTRADOR", "MODERADOR")
+                        .requestMatchers(HttpMethod.GET, "/usuarios").hasAnyRole("ADMINISTRADOR", "MODERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
 
-                        // Rotas de Edição/Deleção de Vagas (Mantidas restritas)
-                        .requestMatchers(HttpMethod.PUT, "/vagas/**").hasAnyAuthority("ADMINISTRADOR", "MODERADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/vagas/**").hasAnyAuthority("ADMINISTRADOR", "MODERADOR")
+                        // Vagas (Criação/Edição/Deleção) restritas
+                        .requestMatchers(HttpMethod.POST, "/vagas/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/vagas/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/vagas/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
 
                         // Notícias restritas
-                        .requestMatchers("/noticias/**").hasAnyAuthority("ADMINISTRADOR", "MODERADOR")
+                        .requestMatchers("/noticias/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
 
                         // --- RESTO ---
                         .anyRequest().authenticated()
@@ -73,12 +67,5 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers(HttpMethod.GET, "/vagas/**")
-                .requestMatchers(HttpMethod.GET, "/noticias/**")
-                .requestMatchers("/auth/login", "/usuarios");
     }
 }
