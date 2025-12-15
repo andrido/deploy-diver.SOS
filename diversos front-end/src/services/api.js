@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5173/api";
+
+
 const api = axios.create({
-  baseURL:"http://localhost:5173/api"
+  baseURL: API_BASE_URL
 });
 
 const toTitleCase = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -20,22 +23,22 @@ const transformJob = (job) => ({
   jobLink: job.linkDaVaga
 });
 
-export const getJobOpenings = async()=>{
+export const getJobOpenings = async () => {
   const response = await api.get("/vagas");
   const transformedData = response.data.map(transformJob);
   return { ...response, data: transformedData };
 }
 
-export const searchJobOpenings = async(params)=>{
-  const response = await api.get("/vagas/buscar", {params});
+export const searchJobOpenings = async (params) => {
+  const response = await api.get("/vagas/buscar", { params });
   console.log(response)
   const transformedData = response.data.map(transformJob);
   return { ...response, data: transformedData };
 }
 
-export const getJobById = async(id)=>{
+export const getJobById = async (id) => {
   const response = await api.get(`/vagas/${id}`);
-  return{
+  return {
     ...response,
     data: transformJob(response.data)
   };
