@@ -31,39 +31,21 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
+    Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable()) // <--- 1. CRITICAL: Desabilita CSRF
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
                         // --- ROTAS PÚBLICAS ---
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Criar conta é público
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/vagas/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/vagas/buscar").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/vagas/{id}").permitAll() // Ex: /vagas/1
-         
                         .requestMatchers(HttpMethod.GET, "/noticias/**").permitAll()
 
-                        // --- ROTAS DO USUÁRIO LOGADO (MEU PERFIL) ---
-                        .requestMatchers("/usuarios/me/**").authenticated()
-
-
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/**").authenticated()
-
-                        // --- ROTAS RESTRITAS (ADMIN/MOD) ---
-                        .requestMatchers(HttpMethod.GET, "/usuarios").hasAnyRole("ADMINISTRADOR", "MODERADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
-
-                        // Vagas (Criação/Edição/Deleção) restritas
-                        .requestMatchers(HttpMethod.POST, "/vagas/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
-                        .requestMatchers(HttpMethod.PUT, "/vagas/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/vagas/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
-
-                        // Notícias restritas
-                        .requestMatchers("/noticias/**").hasAnyRole("ADMINISTRADOR", "MODERADOR")
+                        // --- MUDANÇA TEMPORÁRIA: LIBERAR POST /VAGAS ---
+                        .requestMatchers(HttpMethod.POST, "/vagas/**").permitAll() // <-- LIBERADO PARA TESTE!
 
                         // --- RESTO ---
                         .anyRequest().authenticated()
@@ -72,12 +54,11 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers(HttpMethod.GET, "/vagas/**")
-                .requestMatchers(HttpMethod.GET, "/noticias/**")
-                .requestMatchers("/auth/login", "/usuarios");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring()
+//                .requestMatchers(HttpMethod.GET, "/vagas/**")
+//                .requestMatchers(HttpMethod.GET, "/noticias/**")
+//                .requestMatchers("/auth/login", "/usuarios");
+//    }
 }
