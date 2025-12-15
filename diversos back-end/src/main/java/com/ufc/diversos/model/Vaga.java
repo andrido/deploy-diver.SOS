@@ -17,32 +17,29 @@ public class Vaga {
     private Long id;
 
     @NotBlank(message = "Título é obrigatório")
-    @Column(nullable = false, columnDefinition = "VARCHAR(255)") // Corrigido
-    private String titulo;
+    @Column(nullable = false)
+    private String titulo; // Deixar o Hibernate inferir VARCHAR
 
     @NotBlank(message = "Descrição é obrigatória")
-    // Forçar TEXT para descrição longa, evitando o problema do 'bytea'
-    @Column(nullable = false, columnDefinition = "TEXT") // Corrigido
+    // Forçar TEXT apenas aqui, onde o erro 'bytea' se manifestou.
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String descricao;
 
     @NotBlank(message = "Empresa é obrigatória")
-    @Column(nullable = false, columnDefinition = "VARCHAR(255)") // Corrigido
-    private String empresa;
+    @Column(nullable = false)
+    private String empresa; // Deixar o Hibernate inferir VARCHAR
 
+    // Removi 'nullable = true' pois o @NotBlank exige que seja NOT NULL
     @NotBlank(message = "Link da Vaga é obrigatória")
-    // Se o @NotBlank exige valor, nullable=true não faz sentido.
-    // Mantenha nullable=false ou remova @NotBlank se for opcional.
-    @Column(nullable = false, columnDefinition = "VARCHAR(500)")
-    private String linkDaVaga; // Assumindo que deve ser obrigatório pelo @NotBlank
+    @Column(nullable = false)
+    private String linkDaVaga;
 
     @NotBlank(message = "Cidade é obrigatória")
-    @Column(nullable = false, columnDefinition = "VARCHAR(100)") // Corrigido
-    private String cidade;
+    @Column(nullable = false)
+    private String cidade; // Deixar o Hibernate inferir VARCHAR
 
     @NotBlank(message = "Estado é obrigatório")
-    @Column(nullable = false, columnDefinition = "VARCHAR(100)") // Corrigido
-    private String estado;
+    @Column(nullable = false)
+    private String estado; // Deixar o Hibernate inferir VARCHAR
 
-    // ... restante da classe (datas, enums, etc.)
 }
-// ... restante da classe Vaga (Enums)

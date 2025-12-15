@@ -42,6 +42,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Criar conta é público
                         .requestMatchers(HttpMethod.GET, "/vagas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/vagas/buscar").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/vagas/{id}").permitAll() // Ex: /vagas/1
+         
                         .requestMatchers(HttpMethod.GET, "/noticias/**").permitAll()
 
                         // --- ROTAS DO USUÁRIO LOGADO (MEU PERFIL) ---
