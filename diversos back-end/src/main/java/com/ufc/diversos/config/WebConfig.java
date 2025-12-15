@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:5173",  // frontend em desenvolvimento (Vite)
-                        "https://seufrontend.com" // frontend em produção (IMPORTANTE: SUBSTITUIR!)
+                        "https://diversos-frontend.onrender.com" // frontend em produção (IMPORTANTE: SUBSTITUIR!)
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Os métodos que sua API usa
                 .allowCredentials(true) // Necessário se você usar cookies ou sessões
