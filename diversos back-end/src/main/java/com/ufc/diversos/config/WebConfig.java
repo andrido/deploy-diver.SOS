@@ -12,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
+                .allowedHeaders("*") // Permite todos os cabeçalhos, incluindo Authorization
                 .allowedOrigins(
                         "http://localhost:5173",  // frontend em desenvolvimento (Vite)
                         "https://diversos-frontend.onrender.com" // frontend em produção (IMPORTANTE: SUBSTITUIR!)
