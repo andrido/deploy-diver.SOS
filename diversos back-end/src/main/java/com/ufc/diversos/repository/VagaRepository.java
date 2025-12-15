@@ -1,7 +1,7 @@
 package com.ufc.diversos.repository;
 
 import com.ufc.diversos.model.Vaga;
-// IMPORTANTE: Importar os Enums que estão dentro de Vaga
+
 import com.ufc.diversos.model.Vaga.ModalidadeVaga;
 import com.ufc.diversos.model.Vaga.TipoVaga;
 
@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface VagaRepository extends JpaRepository<Vaga, Long> {
-
 
     @Query("SELECT v FROM Vaga v WHERE " +
             "(:termo IS NULL OR LOWER(v.titulo) LIKE LOWER(CONCAT('%', :termo, '%')) OR LOWER(v.descricao) LIKE LOWER(CONCAT('%', :termo, '%'))) AND " +

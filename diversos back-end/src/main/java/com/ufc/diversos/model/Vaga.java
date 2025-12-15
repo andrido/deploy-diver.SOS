@@ -16,69 +16,33 @@ public class Vaga {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
     @NotBlank(message = "Título é obrigatório")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255)") // Corrigido
     private String titulo;
 
     @NotBlank(message = "Descrição é obrigatória")
-    @Column(nullable = false, length = 1000)
+    // Forçar TEXT para descrição longa, evitando o problema do 'bytea'
+    @Column(nullable = false, columnDefinition = "TEXT") // Corrigido
     private String descricao;
 
     @NotBlank(message = "Empresa é obrigatória")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255)") // Corrigido
     private String empresa;
 
     @NotBlank(message = "Link da Vaga é obrigatória")
-    @Column(nullable = true)
-    private String linkDaVaga;
+    // Se o @NotBlank exige valor, nullable=true não faz sentido.
+    // Mantenha nullable=false ou remova @NotBlank se for opcional.
+    @Column(nullable = false, columnDefinition = "VARCHAR(500)")
+    private String linkDaVaga; // Assumindo que deve ser obrigatório pelo @NotBlank
 
     @NotBlank(message = "Cidade é obrigatória")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(100)") // Corrigido
     private String cidade;
 
     @NotBlank(message = "Estado é obrigatório")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(100)") // Corrigido
     private String estado;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
-    @Column(nullable = false)
-    private LocalDateTime dataCriacao;
-
-    @Column(nullable = true)
-    private LocalDateTime dataLimite; // Não está com @NotNull, então é opcional
-
-    @NotNull(message = "Status da Vaga é obrigatório") // <<< CORREÇÃO AQUI
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatusVaga status;
-
-    @NotNull(message = "Tipo da Vaga é obrigatório") // <<< CORREÇÃO AQUI
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoVaga tipo;
-
-    @NotNull(message = "Modalidade da Vaga é obrigatório") // <<< CORREÇÃO AQUI
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ModalidadeVaga modalidade;
-
-    public enum StatusVaga {
-        ATIVA,
-        PREENCHIDA
-    }
-
-    public enum TipoVaga {
-        AFIRMATIVA,
-        NAO_AFIRMATIVA,
-        EDITAL,
-        NAO_EDITAL
-    }
-
-    public enum ModalidadeVaga {
-        PRESENCIAL,
-        REMOTO,
-        HIBRIDO
-    }
+    // ... restante da classe (datas, enums, etc.)
 }
+// ... restante da classe Vaga (Enums)
