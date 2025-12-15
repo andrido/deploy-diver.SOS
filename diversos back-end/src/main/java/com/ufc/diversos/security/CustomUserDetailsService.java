@@ -1,10 +1,12 @@
 package com.ufc.diversos.security;
 
 import com.ufc.diversos.repository.UsuarioRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@Lazy
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

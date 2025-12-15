@@ -22,9 +22,3 @@ INSERT INTO vaga (data_criacao, descricao, empresa, status, titulo, tipo, cidade
 ('2025-12-14 20:56:58.150250','Vaga para desenvolvedor front-end com React e TypeScript. Totalmente remoto.','Web Giants','ATIVA','Desenvolvedor React Front-end','AFIRMATIVA','Remoto','2026-04-01 23:59:00.000000','https://vagas.webgiants.com.br/react-ts','REMOTO','Todos os estados'),
 ('2025-12-14 21:05:33.931630','Vaga para Analista de Dados com experiência em PostgreSQL e Python.','Data Insights','ATIVA','Analista de Dados Júnior','AFIRMATIVA','Fortaleza','2026-03-01 23:59:00.000000','https://vagas.datainsights.com.br/analista-jr','PRESENCIAL','Ceará');
 
-
--- Correção: Os IDs de usuário (8, 7) e vagas (4, 5) agora serão 
--- 2, 1 (usuários) e 1, 2 (vagas), pois os IDs são gerados sequencialmente a partir de 1.
-INSERT INTO usuarios_vagas_salvas (usuario_id, vaga_id) VALUES
-(2,1), -- Usuário 2 (usuario@diversos.com) salva Vaga 1 (Desenvolvedor Kotlin)
-(1,2); -- Usuário 1 (moderador@diversos.com) salva Vaga 2 (Desenvolvedor Java Backend)
