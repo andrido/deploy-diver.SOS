@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-// import org.springframework.scheduling.annotation.Async; <--- REMOVA OU COMENTE ISSO
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,44 +17,54 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String remetente;
 
-    // Configura a URL do Backend (Railway) ou Frontend (Render) via variável
-    // Se não tiver a variável, usa localhost como fallback, mas ideal é configurar no Railway
-    @Value("${api.url:https://deploy-diversos-production.up.railway.app}")
+    // Pega a URL do Railway definida nas variáveis de ambiente
+    // Se não achar, usa localhost como padrão para testes locais
+    @Value("${api.url:http://localhost:8080}")
     private String apiUrl;
 
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
-    // RETIRE O @Async PARA O ERRO APARECER NA HORA
-    // public void enviarEmailConfirmacao(String emailDestino, String token) {
+    /**
+     * Envia o email de forma ASSÍNCRONA (em outra thread).
+     * O usuário não fica esperando o email ser enviado para ver a tela de sucesso.
+     */
+    @Async
+    public void enviarEmailConfirmacao(String emailDestino, String token) {
+        try {
+            logger.info("Iniciando envio de e-mail assíncrono para: {}", emailDestino);
 
-    // Vamos tirar o try-catch DAQUI e deixar o UsuarioService tratar o erro
-    // Adicione 'throws Exception' na assinatura
-    public void enviarEmailConfirmacao(String emailDestino, String token) throws Exception {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(remetente);
+            message.setTo(emailDestino);
+            message.setSubject("Confirmação de Conta - UFC Diversos");
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(remetente);
-        message.setTo(emailDestino);
-        message.setSubject("Confirmação de Conta - UFC Diversos");
+            // Monta o link apontando para a sua API no Railway
+            String link = apiUrl + "/auth/confirmar?token=" + token;
 
-        // CORREÇÃO DO LINK: Agora aponta para o Railway, não localhost
-        String link = apiUrl + "/auth/confirmar?token=" + token;
+            String texto = """
+                    Olá!
+                    
+                    Seja bem-vindo à Diver.SOS.
+                    Para ativar sua conta e liberar seu acesso, clique no link abaixo:
+                    
+                    %s
+                    
+                    Se você não solicitou este cadastro, apenas ignore este e-mail.
+                    """.formatted(link);
 
-        String texto = """
-                Olá!
-                
-                Seja bem-vindo à Diver.SOS.
-                Para ativar sua conta e liberar seu acesso, clique no link abaixo:
-                
-                %s
-                
-                Se você não solicitou este cadastro, apenas ignore este e-mail.
-                """.formatted(link);
+            message.setText(texto);
 
-        message.setText(texto);
+            mailSender.send(message);
 
-        mailSender.send(message);
-        logger.info("E-mail de confirmação enviado com sucesso para: {}", emailDestino);
+            logger.info("✅ E-mail enviado com sucesso para: {}", emailDestino);
+
+        } catch (Exception e) {
+            // Se der erro aqui, o usuário JÁ ESTÁ SALVO no banco.
+            // Apenas logamos o erro para você ver no painel do Railway.
+            logger.error("❌ ERRO CRÍTICO AO ENVIAR EMAIL (Async): {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
