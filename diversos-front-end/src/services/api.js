@@ -59,7 +59,13 @@ export const loginUser = async (loginData) => {
 }
 
 export const registerUser = async (userData) => {
-  const response = await api.post('/usuarios', userData);
+  // A mágica: enviamos um header vazio para sobrescrever o Interceptor
+  // Isso garante que a requisição saia "limpa", sem Bearer token
+  const response = await api.post('/usuarios', userData, {
+    headers: {
+      Authorization: ''
+    }
+  });
   return response;
 }
 
@@ -116,12 +122,12 @@ export const saveJobOpening = async (id) => {
   return response;
 }
 
-export const deleteSavedJobOpening = async (id) =>{
+export const deleteSavedJobOpening = async (id) => {
   const response = await api.delete(`/usuarios/me/vagas/${id}`);
   return response;
 }
 
-export const deleteJobOpening = async(id)=>{
+export const deleteJobOpening = async (id) => {
   const response = await api.delete(`/vagas/${id}`);
   return response;
 }
@@ -132,7 +138,7 @@ export const saveGroup = async (id) => {
   return response;
 }
 
-export const deleteSavedGroup = async (id) =>{
+export const deleteSavedGroup = async (id) => {
   const response = await api.delete(`/usuarios/me/grupos/${id}`);
   return response;
 }
@@ -143,7 +149,7 @@ export const getMyGroups = async () => {
 }
 
 //notícias
-export const getNews = async () =>{
+export const getNews = async () => {
   const response = await api.get('/noticias');
   return response;
 }
@@ -174,13 +180,13 @@ export const getJobOpenings = async () => {
   return { ...response, data: transformedData };
 }
 
-export const createJobOpening = async (data) =>{
-  const response = await api.post("/vagas",data);
+export const createJobOpening = async (data) => {
+  const response = await api.post("/vagas", data);
   return response;
 }
 
-export const editJobOpening = async (id,data)=>{
-  const response = await api.put(`/vagas/${id}`,data);
+export const editJobOpening = async (id, data) => {
+  const response = await api.put(`/vagas/${id}`, data);
   return response;
 }
 
@@ -225,7 +231,7 @@ export const deleteGroup = async (id) => {
 }
 
 //habilidades
-export const getSkills = async () =>{
+export const getSkills = async () => {
   const response = await api.get('/habilidades');
   return response;
 }
