@@ -25,12 +25,11 @@ public class EmailService {
     @Value("${SENDGRID_API_KEY}") // Pega a chave do ambiente
     private String sendGridApiKey;
 
-    @Value("${spring.mail.username}") // Seu email cadastrado no SendGrid (Sender)
+    @Value("${app.mail.from}")
     private String remetente;
 
-    @Value("${api.url:http://localhost:8080}")
+    @Value("${API_URL}")
     private String apiUrl;
-
     @Async
     public void enviarEmailConfirmacao(String emailDestino, String token) {
         logger.info("🚀 Iniciando envio via SendGrid para: {}", emailDestino);
