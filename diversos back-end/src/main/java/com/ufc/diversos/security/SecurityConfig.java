@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()                 // Login
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()  // Cadastro (Registro)
                         .requestMatchers(HttpMethod.GET, "/auth/confirmar").permitAll() // Confirmação de E-mail
-
+                        .requestMatchers("/error").permitAll()
                         // Leitura de dados públicos
                         .requestMatchers(HttpMethod.GET, "/vagas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/noticias/**").permitAll()
