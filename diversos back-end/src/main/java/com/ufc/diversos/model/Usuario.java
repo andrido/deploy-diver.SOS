@@ -48,6 +48,7 @@ public class Usuario implements UserDetails {
  @Enumerated(EnumType.STRING)
  private TipoDeUsuario tipoDeUsuario; // Sugiro mudar TipoDeUsuario também
 
+ @JsonIgnore
  @ManyToMany
  @JoinTable(
          name = "usuarios_vagas_salvas",
@@ -56,6 +57,7 @@ public class Usuario implements UserDetails {
  )
  private List<Vaga> vagasSalvas;
 
+ @JsonIgnore
  @ManyToMany(fetch = FetchType.LAZY)
  @JoinTable(
          name = "usuarios_grupos_salvos",
