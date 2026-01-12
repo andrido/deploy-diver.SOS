@@ -84,13 +84,10 @@ public class UsuarioService {
 
         tokenRepository.save(token);
 
-        try {
-            emailService.enviarEmailConfirmacao(usuarioSalvo.getEmail(), token.getToken());
-        } catch (Exception e) {
-            // Apenas loga o erro, mas NÃO aborta o cadastro
-            System.out.println("⚠️ FALHA AO ENVIAR EMAIL NO DEPLOY: " + e.getMessage());
-            // Aqui você poderia salvar um log no banco se quisesse
-        }
+        // 5. Envia o E-mail
+
+        emailService.enviarEmailConfirmacao(usuarioSalvo.getEmail(), token.getToken());
+
         return usuarioSalvo;
     }
 
