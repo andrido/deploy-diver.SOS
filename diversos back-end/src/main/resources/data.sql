@@ -10,8 +10,8 @@ INSERT INTO usuarios (cpf, email, bairro, cep, cidade, complemento, estado, nume
 
 -- Correção: Removida a coluna 'id' e seu valor fixo
 -- NOTA: Aqui, o autor_id (9) deve corresponder ao ID gerado automaticamente para 'admin@diversos.com' (o terceiro registro acima)
-INSERT INTO noticia (conteudo, data_publicacao, titulo, autor_id) VALUES
-('Venha aprender Java conosco no dia 25 de janeiro! Oferecemos vagas afirmativas e bolsa para quem precisar.','2025-12-01 21:11:37.374272','Workshop de Spring Boot para Pessoas LGBTQIA+',3);
+INSERT INTO noticia (conteudo, data_publicacao, titulo) VALUES
+('Venha aprender Java conosco no dia 25 de janeiro! Oferecemos vagas afirmativas e bolsa para quem precisar.','2025-12-01 21:11:37.374272','Workshop de Spring Boot para Pessoas LGBTQIA+');
 
 
 -- Correção: Removida a coluna 'id' e seus valores fixos
