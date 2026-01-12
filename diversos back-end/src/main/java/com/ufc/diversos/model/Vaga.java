@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -16,22 +17,25 @@ public class Vaga {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @NotBlank(message = "Título é obrigatório")
     @Column(nullable = false)
     private String titulo;
 
     @NotBlank(message = "Descrição é obrigatória")
-    // ESSENCIAL: Força o tipo TEXT no PostgreSQL para evitar o erro 'bytea'
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, length = 1000)
     private String descricao;
+
+    @Column(name = "banner_da_vaga")
+    private String bannerDaVaga;
 
     @NotBlank(message = "Empresa é obrigatória")
     @Column(nullable = false)
     private String empresa;
 
     @NotBlank(message = "Link da Vaga é obrigatória")
-    // CORRIGIDO: Se é @NotBlank, deve ser nullable=false.
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String linkDaVaga;
 
     @NotBlank(message = "Cidade é obrigatória")
@@ -46,28 +50,37 @@ public class Vaga {
     @Column(nullable = false)
     private LocalDateTime dataCriacao;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @Column(nullable = true)
-    private LocalDateTime dataLimite;
+    private LocalDateTime dataLimite; // Não está com @NotNull, então é opcional
 
-    @NotNull(message = "Status da Vaga é obrigatório")
+    @NotNull(message = "Status da Vaga é obrigatório") // <<< CORREÇÃO AQUI
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusVaga status;
 
-    @NotNull(message = "Tipo da Vaga é obrigatório")
+    @NotNull(message = "Tipo da Vaga é obrigatório") // <<< CORREÇÃO AQUI
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoVaga tipo;
 
-    @NotNull(message = "Modalidade da Vaga é obrigatório")
+    @NotNull(message = "Modalidade da Vaga é obrigatório") // <<< CORREÇÃO AQUI
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ModalidadeVaga modalidade;
 
-    // Enums mantidos aninhados:
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "vagas_habilidades",
+            joinColumns = @JoinColumn(name = "vaga_id"),
+            inverseJoinColumns = @JoinColumn(name = "habilidade_id")
+    )
+    private List<Habilidade> habilidades;
+
     public enum StatusVaga {
         ATIVA,
-        PREENCHIDA
+        PREENCHIDA,
+        INATIVA
     }
 
     public enum TipoVaga {

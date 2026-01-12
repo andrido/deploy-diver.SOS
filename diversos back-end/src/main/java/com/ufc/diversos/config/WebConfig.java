@@ -1,24 +1,15 @@
-package com.ufc.diversos.config;
+package com.ufc.diversos.config; // ou no pacote security se preferir
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedHeaders("*") // Permite todos os cabeçalhos, incluindo Authorization
-                .allowedOrigins(
-                        "http://localhost:5173",  // frontend em desenvolvimento (Vite)
-                        "https://diversos-frontend.onrender.com" // frontend em produção (IMPORTANTE: SUBSTITUIR!)
-                )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Os métodos que sua API usa
-                .allowCredentials(true) // Necessário se você usar cookies ou sessões
-                .maxAge(3600); // Cache do resultado do "preflight"
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/imagens/**")
+                .addResourceLocations("file:uploads/");
     }
 }

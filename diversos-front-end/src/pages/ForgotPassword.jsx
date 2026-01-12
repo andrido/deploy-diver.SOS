@@ -1,88 +1,60 @@
-import React from "react";
-import { Mail } from "lucide-react";
-import AuthLayout from "../components/AuthLayout";
-import InputField from "../components/InputField.jsx";
-import Button from "../components/Button";
-import { useForm } from "../hooks/useForm";
-import { validateEmail, validateRequired } from "../utils/Validation";
+import { Link } from "react-router-dom";
+import AuthForm from "../components/AuthForm";
+import Field from "../components/Field";
+import { validateEmail } from "../utils/Validation";
+import { useState } from "react";
 
-export default function ForgotPasswordPage({ onNavigate }) {
-  const {
-    values,
-    error,
-    success,
-    loading,
-    setError,
-    setSuccess,
-    setLoading,
-    handleChange,
-  } = useForm({
+
+export default function ForgotPassword() {
+  const passFooter = (<Link className="underline font-medium" to={'/login'}>Voltar para o login</Link>);
+  const [form, setForm] = useState({
     email: "",
   });
 
-  const handleSubmit = () => {
-    setError("");
-    setSuccess("");
+  const [errors, setErrors] = useState({});
 
-    const requiredError = validateRequired(values);
-    if (requiredError) {
-      setError(requiredError);
+  function handleChange(field) {
+    return (e) => {
+      const value = e.target.value;
+
+      setForm((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const newErrors = {};
+
+    // validações básicas
+    if (!form.email) newErrors.email = "Email obrigatório";
+    if (!(validateEmail(form.email))) newErrors.email = "Digite um email válido";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      console.log(form,errors)
       return;
     }
 
-    if (!validateEmail(values.email)) {
-      setError("Por favor, insira um email válido");
-      return;
-    }
 
-    setLoading(true);
-
-    setTimeout(() => {
-      setSuccess("Instruções de recuperação enviadas para seu email!");
-      setLoading(false);
-      setTimeout(() => onNavigate("login"), 2000);
-    }, 1500);
-  };
+    console.log("Envio válido:", form);
+  }
 
   return (
-    <AuthLayout error={error} success={success}>
-      <h1 className="text-2xl font-bold text-gray-900 text-center mt-4">
-        Recuperar Senha
-      </h1>
-      <p className="text-sm semibold text-black text-center mt-4 mb-4">
-        Digite seu email para receber instruções de recuperação
-      </p>
-
-      <div className="m-4">
-        <InputField
-          label="Email"
+    <div className="flex flex-col items-center bg-[var(--profile-bg)] min-h-full">
+      <img className="w-[50%] max-w-[18rem] h-auto mt-10 mb-3" src="./src/assets/logo.svg" alt="Logo da diver.sos" />
+      <AuthForm heading={'Recuperar senha'} onSubmit={handleSubmit} requiredStyle={false} btnText={'Enviar'} footer={passFooter}>
+        <p className="text-sm">Informe seu endereço de email que nós enviaremos um link para a redefinição de senha.</p>
+        <Field label={'Email'}
           type="email"
-          value={values.email}
-          onChange={handleChange("email")}
-          placeholder="Digite seu email"
-          icon={Mail}
-          disabled={loading}
-          onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-        />
-        <div className="mt-8">
-          <Button onClick= {handleSubmit} loading={loading} className = "">
-            Enviar instruções
-          </Button>
-        </div>
-
-        <div className="text-center m-4">
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate("login");
-            }}
-            className="text-sm font-medium text-black underline hover:text-[#6FC847] hover:underline"
-          >
-            Voltar para o login
-          </a>
-        </div>
-      </div>
-    </AuthLayout>
+          placeholder={'exemplo@email.com'}
+          onChange={handleChange('email')}
+          error={errors.email} />
+      </AuthForm>
+    </div>
   );
 }

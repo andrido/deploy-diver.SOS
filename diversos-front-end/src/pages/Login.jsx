@@ -1,139 +1,111 @@
+import { Link, useNavigate } from "react-router-dom";
+import AuthForm from "../components/AuthForm";
+import Field from "../components/Field";
 import { useState } from "react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import AuthLayout from "../components/AuthLayout";
-import InputField from "../components/InputField.jsx";
-import Button from "../components/Button";
-import { useForm } from "../hooks/useForm";
-import { validateEmail, validateRequired } from "../utils/Validation";
+import { validateEmail } from "../utils/Validation";
+import { useAuth } from "../context/AuthContext";
+import Feedback from "../components/Feedback";
 
-export default function Login({ onNavigate, onLogin }) {
-  const {
-    values,
-    error,
-    success,
-    loading,
-    setError,
-    setSuccess,
-    setLoading,
-    handleChange,
-  } = useForm({
+
+export default function Login() {
+  const loginFooter = (<div className="flex flex-col items-center gap-1"><Link className="underline font-medium" to={'/esqueci-a-senha'}>Esqueci minha senha</Link><p className="font-medium">Não tem conta? <Link className="font-bold underline" to={'/cadastro'}>Crie agora</Link></p></div>);
+
+  const {login,loading} = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [showFeedback,setShowFeedback] = useState(false);
+  const [feedback,setFeedback] = useState({});
+  const [feedbackOnClose, setFeedbackOnClose] = useState(() => () => setShowFeedback(false));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  function handleChange(field) {
+    return (e) => {
+      const value = e.target.value;
+      setForm((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+  }
 
-  const handleSubmit = () => {
-    setError("");
-    setSuccess("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const requiredError = validateRequired(values);
-    if (requiredError) {
-      setError(requiredError);
+    const newErrors = {};
+
+    // validações básicas
+    if (!form.email) newErrors.email = "Email obrigatório";
+    if (!(validateEmail(form.email))) newErrors.email = "Digite um email válido";
+    if (!form.password) newErrors.password = "Digite sua senha";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
-    if (!validateEmail(values.email)) {
-      setError("Por favor, insira um email válido");
-      return;
+    // Mensagem de erro simplificada, sem mapeamento detalhado
+    const getLoginErrorMessage = (err) => {
+      return err?.response?.data?.message || 'Não foi possível fazer login. Verifique suas credenciais e tente novamente.';
+    };
+
+    try {
+      setIsSubmitting(true);
+      await login(form);
+      // Determina rota segura para administradores/moderadores
+      const role = (sessionStorage.getItem('role') || '').toLowerCase();
+      const isPrivileged = ['administrador','moderador','admin','moderator'].includes(role);
+      const redirectPath = isPrivileged ? '/admin' : '/';
+      // Mostrar feedback de sucesso antes de redirecionar
+      setFeedback({
+        type: 'success',
+        heading: 'Login realizado',
+        message: 'Bem-vindo! Redirecionando...',
+        duration: 2000
+      });
+      setShowFeedback(true);
+      // Mantém loading até redirecionar; desligamos ao navegar
+      setFeedbackOnClose(() => () => { setShowFeedback(false); navigate(redirectPath); });
+    } catch (err) {
+      const apiMessage = getLoginErrorMessage(err);
+      setFeedback({
+        type: 'error',
+        heading: 'Erro ao fazer login',
+        message: apiMessage,
+        duration: 4000
+      });
+      setShowFeedback(true);
+      setFeedbackOnClose(() => () => setShowFeedback(false));
+      // Em erro, desliga loading
+      setIsSubmitting(false);
     }
-
-    setLoading(true);
-
-    setTimeout(() => {
-      if (
-        values.email === "usuario@exemplo.com" &&
-        values.password === "senha123"
-      ) {
-        setSuccess("Login realizado com sucesso!");
-        setTimeout(() => {
-          onLogin({ name: "Usuário Exemplo", email: values.email });
-        }, 1000);
-      } else {
-        setError("Email ou senha incorretos");
-      }
-      setLoading(false);
-    }, 1500);
-  };
-
+  }
   return (
-    <AuthLayout error={error} success={success}>
-      <h1 className="text-2xl font-bold text-gray-900 text-center mt-8 mb-4">
-        Acesse a sua conta
-      </h1>
-
-      <div className="space-y-5 w-full px-6">
-        <InputField
-          label="Email"
-          type="email"
-          value={values.email}
-          onChange={handleChange("email")}
-          placeholder="Digite seu email"
-          icon={Mail}
-          disabled={loading}
-          onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+    <div className="flex flex-col items-center bg-[var(--profile-bg)] min-h-full">
+      <img className="w-[50%] max-w-[18rem] h-auto mt-10 mb-3" src="./src/assets/logo.svg" alt="Logo da diver.sos" />
+      <AuthForm heading={'Acesse sua conta'} onSubmit={handleSubmit} requiredStyle={false} btnText={'Entrar'} btnLoadingText={'Entrando...'} loading={isSubmitting} footer={loginFooter}>
+        <Field label={'Email'}
+          type="text"
+          placeholder={'exemplo@email.com'}
+          error={errors.email}
+          onChange={handleChange('email')} />
+        <Field label={'Senha'}
+          type="password"
+          error={errors.password}
+          onChange={handleChange('password')} />
+      </AuthForm>
+      {showFeedback && (
+        <Feedback
+          type={feedback.type}
+          heading={feedback.heading}
+          message={feedback.message}
+          duration={feedback.duration || 3000}
+          onClose={feedbackOnClose}
         />
-
-        <InputField
-          label="Senha"
-          type={showPassword ? "text" : "password"}
-          value={values.password}
-          onChange={handleChange("password")}
-          placeholder="Digite sua senha"
-          icon={Lock}
-          disabled={loading}
-          onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-          rightIcon={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          }
-        />
-
-        
-
-
-        <Button onClick={handleSubmit} loading={loading}>
-          ENTRAR
-        </Button>
-{/* Link "Esqueceu a senha?" com margem negativa para ficar mais próximo do input */}
-        <div className="text-center">
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate("forgot");
-            }}
-            className="text-sm font-medium text-black underline hover:text-[#6FC847] hover:underline"
-          >
-            Esqueceu a senha?
-          </a>
-        </div>
-
-        {/* Link "Criar conta" */}
-        <p className="text-center text-sm text-black underline hover:text-[#6FC847]">
-          
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate("register");
-            }}
-            className="font-medium text-black hover:text-[#6FC847] hover:underline"
-          >
-            Não tem conta? Crie agora!
-          </a>
-        </p>
-
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-          <p className="text-xs text-gray-600 text-center">
-            <strong>Demo:</strong> usuario@exemplo.com / senha123
-          </p>
-        </div>
-      </div>
-    </AuthLayout>
+      )}
+    </div>
   );
 }

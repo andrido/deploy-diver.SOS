@@ -41,7 +41,7 @@ public class VagaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vaga> updateVaga(@PathVariable Long id, @Valid @RequestBody Vaga vagaDetails) {
+    public ResponseEntity<Vaga> updateVaga(@PathVariable Long id, @RequestBody Vaga vagaDetails) {
         return vagaService.atualizar(id, vagaDetails)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -54,7 +54,7 @@ public class VagaController {
                 : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/filtro")
+    @GetMapping("/buscar")
     public List<Vaga> buscarVagas(
             @RequestParam(required = false) String termo,
             @RequestParam(required = false) Vaga.ModalidadeVaga modalidade,
@@ -63,6 +63,16 @@ public class VagaController {
 
         // Chame o método de busca
         return vagaService.buscarComFiltros(termo, modalidade, tipo, cidade);
+    }
+
+    @PostMapping("/{id}/foto")
+    public ResponseEntity<Vaga> uploadBanner(@PathVariable Long id,
+                                             @RequestParam("arquivo") org.springframework.web.multipart.MultipartFile arquivo) {
+
+
+        Vaga vagaAtualizada = vagaService.atualizarBannerVaga(id, arquivo);
+
+        return ResponseEntity.ok(vagaAtualizada);
     }
 
 }

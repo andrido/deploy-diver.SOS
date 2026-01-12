@@ -1,5 +1,6 @@
 package com.ufc.diversos.controller;
 
+import com.ufc.diversos.model.Grupo;
 import com.ufc.diversos.model.Usuario;
 import com.ufc.diversos.model.Vaga;
 import com.ufc.diversos.service.UsuarioService;
@@ -59,6 +60,15 @@ public class UsuarioController {
     // --- ROTAS DO PERFIL PESSOAL (/me) ---
     // Essas rotas usam o token para identificar o usuário, sem precisar passar ID na URL
 
+    @PostMapping("/me/foto")
+    public ResponseEntity<Usuario> uploadFotoPerfil(@RequestParam("arquivo") org.springframework.web.multipart.MultipartFile arquivo) {
+        Usuario usuarioLogado = usuarioService.getUsuarioLogado();
+
+        Usuario usuarioAtualizado = usuarioService.atualizarFotoPerfil(usuarioLogado, arquivo);
+
+        return ResponseEntity.ok(usuarioAtualizado);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<Usuario> meuPerfil() {
         return ResponseEntity.ok(usuarioService.getUsuarioLogado());
@@ -79,5 +89,24 @@ public class UsuarioController {
     public ResponseEntity<Void> removerVagaFavorita(@PathVariable Long vagaId) {
         usuarioService.removerVagaSalva(vagaId);
         return ResponseEntity.ok().build(); // Retorna 200 OK
+    }
+
+    // --- NOVOS ENDPOINTS: GRUPOS SALVOS ---
+
+    @PostMapping("/me/grupos/{grupoId}")
+    public ResponseEntity<Void> salvarGrupo(@PathVariable Long grupoId) {
+        usuarioService.salvarGrupo(grupoId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/me/grupos/{grupoId}")
+    public ResponseEntity<Void> removerGrupoSalvo(@PathVariable Long grupoId) {
+        usuarioService.removerGrupoSalvo(grupoId);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    @GetMapping("/me/grupos")
+    public ResponseEntity<List<Grupo>> listarMeusGrupos() {
+        return ResponseEntity.ok(usuarioService.listarMeusGruposSalvos());
     }
 }
