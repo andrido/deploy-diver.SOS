@@ -5,8 +5,10 @@ import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.ClickTrackingSetting;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import com.sendgrid.helpers.mail.objects.TrackingSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +57,13 @@ public class EmailService {
 
         // 3. Cria o objeto de e-mail do SendGrid
         Mail mail = new Mail(from, subject, to, content);
+
+        TrackingSettings trackingSettings = new TrackingSettings();
+        ClickTrackingSetting clickTrackingSetting = new ClickTrackingSetting();
+        clickTrackingSetting.setEnable(false);
+        clickTrackingSetting.setEnableText(false);
+        trackingSettings.setClickTrackingSetting(clickTrackingSetting);
+        mail.setTrackingSettings(trackingSettings);
 
         // 4. Prepara o envio
         SendGrid sg = new SendGrid(sendGridApiKey);
