@@ -58,180 +58,174 @@ export const loginUser = async (loginData) => {
   return response;
 }
 
-export const registerUser = async (userData) => {
-  // A mágica: enviamos um header vazio para sobrescrever o Interceptor
-  // Isso garante que a requisição saia "limpa", sem Bearer token
-  const response = await api.post('/usuarios', userData, {
-    headers: {
-      Authorization: ''
-    }
-  });
-  return response;
-}
+  export const registerUser = async (userData) => {
+    const response = await api.post('/usuarios', userData);
+    return response;
+  }
 
-export const getMyData = async () => {
-  const response = await api.get("/usuarios/me");
-  console.log(response);
-  return response;
-}
+  export const getMyData = async () => {
+    const response = await api.get("/usuarios/me");
+    console.log(response);
+    return response;
+  }
 
-export const updateMyData = async (data) => {
-  const response = await api.put("/usuarios/me", data);
-  return response;
-}
+  export const updateMyData = async (data) => {
+    const response = await api.put("/usuarios/me", data);
+    return response;
+  }
 
-export const getUserById = async (id) => {
-  const response = await api.get(`/usuarios/${id}`);
-  return response;
-}
+  export const getUserById = async (id) => {
+    const response = await api.get(`/usuarios/${id}`);
+    return response;
+  }
 
-export const updateUserById = async (id, data) => {
-  const response = await api.put(`/usuarios/${id}`, data);
-  return response;
-}
+  export const updateUserById = async (id, data) => {
+    const response = await api.put(`/usuarios/${id}`, data);
+    return response;
+  }
 
-export const getAllUsers = async () => {
-  const response = await api.get('/usuarios');
-  return response;
-}
+  export const getAllUsers = async () => {
+    const response = await api.get('/usuarios');
+    return response;
+  }
 
-export const uploadProfilePhoto = async (file) => {
-  const formData = new FormData();
-  formData.append('arquivo', file);
-  const response = await api.post('/usuarios/me/foto', formData, {
-    headers: {
-      'Content-Type': undefined
-    }
-  });
-  return response;
-}
+  export const uploadProfilePhoto = async (file) => {
+    const formData = new FormData();
+    formData.append('arquivo', file);
+    const response = await api.post('/usuarios/me/foto', formData, {
+      headers: {
+        'Content-Type': undefined
+      }
+    });
+    return response;
+  }
 
-export const deleteUser = async (id) => {
-  const response = await api.delete(`/usuarios/${id}`);
-  return response;
-}
+  export const deleteUser = async (id) => {
+    const response = await api.delete(`/usuarios/${id}`);
+    return response;
+  }
 
-//usuários -> vagas
-export const getMyFavoriteJobs = async () => {
-  const response = await api.get("/usuarios/me/vagas");
-  const transformedData = Array.isArray(response.data) ? response.data.map(transformJob) : [];
-  return { ...response, data: transformedData };
-}
-export const saveJobOpening = async (id) => {
-  const response = await api.post(`/usuarios/me/vagas/${id}`);
-  return response;
-}
+  //usuários -> vagas
+  export const getMyFavoriteJobs = async () => {
+    const response = await api.get("/usuarios/me/vagas");
+    const transformedData = Array.isArray(response.data) ? response.data.map(transformJob) : [];
+    return { ...response, data: transformedData };
+  }
+  export const saveJobOpening = async (id) => {
+    const response = await api.post(`/usuarios/me/vagas/${id}`);
+    return response;
+  }
 
-export const deleteSavedJobOpening = async (id) => {
-  const response = await api.delete(`/usuarios/me/vagas/${id}`);
-  return response;
-}
+  export const deleteSavedJobOpening = async (id) =>{
+    const response = await api.delete(`/usuarios/me/vagas/${id}`);
+    return response;
+  }
 
-export const deleteJobOpening = async (id) => {
-  const response = await api.delete(`/vagas/${id}`);
-  return response;
-}
+  export const deleteJobOpening = async(id)=>{
+    const response = await api.delete(`/vagas/${id}`);
+    return response;
+  }
 
-//usuários->grupos
-export const saveGroup = async (id) => {
-  const response = await api.post(`/usuarios/me/grupos/${id}`);
-  return response;
-}
+  //usuários->grupos
+  export const saveGroup = async (id) => {
+    const response = await api.post(`/usuarios/me/grupos/${id}`);
+    return response;
+  }
 
-export const deleteSavedGroup = async (id) => {
-  const response = await api.delete(`/usuarios/me/grupos/${id}`);
-  return response;
-}
+  export const deleteSavedGroup = async (id) =>{
+    const response = await api.delete(`/usuarios/me/grupos/${id}`);
+    return response;
+  }
 
-export const getMyGroups = async () => {
-  const response = await api.get('/usuarios/me/grupos');
-  return response;
-}
+  export const getMyGroups = async () => {
+    const response = await api.get('/usuarios/me/grupos');
+    return response;
+  }
 
-//notícias
-export const getNews = async () => {
-  const response = await api.get('/noticias');
-  return response;
-}
+  //notícias
+  export const getNews = async () =>{
+    const response = await api.get('/noticias');
+    return response;
+  }
 
-export const getNewsById = async (id) => {
-  const response = await api.get(`/noticias/${id}`);
-  return response;
-}
-export const createNews = async (data) => {
-  const response = await api.post('/noticias', data);
-  return response;
-}
+  export const getNewsById = async (id) => {
+    const response = await api.get(`/noticias/${id}`);
+    return response;
+  }
+  export const createNews = async (data) => {
+    const response = await api.post('/noticias', data);
+    return response;
+  }
 
-export const editNews = async (id, data) => {
-  const response = await api.put(`/noticias/${id}`, data);
-  return response;
-}
+  export const editNews = async (id, data) => {
+    const response = await api.put(`/noticias/${id}`, data);
+    return response;
+  }
 
-export const deleteNews = async (id) => {
-  const response = await api.delete(`/noticias/${id}`);
-  return response;
-}
+  export const deleteNews = async (id) => {
+    const response = await api.delete(`/noticias/${id}`);
+    return response;
+  }
 
-//vagas
-export const getJobOpenings = async () => {
-  const response = await api.get("/vagas");
-  const transformedData = response.data.map(transformJob);
-  return { ...response, data: transformedData };
-}
+  //vagas
+  export const getJobOpenings = async () => {
+    const response = await api.get("/vagas");
+    const transformedData = response.data.map(transformJob);
+    return { ...response, data: transformedData };
+  }
 
-export const createJobOpening = async (data) => {
-  const response = await api.post("/vagas", data);
-  return response;
-}
+  export const createJobOpening = async (data) =>{
+    const response = await api.post("/vagas",data);
+    return response;
+  }
 
-export const editJobOpening = async (id, data) => {
-  const response = await api.put(`/vagas/${id}`, data);
-  return response;
-}
+  export const editJobOpening = async (id,data)=>{
+    const response = await api.put(`/vagas/${id}`,data);
+    return response;
+  }
 
-export const searchJobOpenings = async (params) => {
-  const response = await api.get("/vagas/buscar", { params });
-  const transformedData = response.data.map(transformJob);
-  return { ...response, data: transformedData };
-}
+  export const searchJobOpenings = async (params) => {
+    const response = await api.get("/vagas/buscar", { params });
+    const transformedData = response.data.map(transformJob);
+    return { ...response, data: transformedData };
+  }
 
-export const getJobById = async (id) => {
-  const response = await api.get(`/vagas/${id}`);
-  return {
-    ...response,
-    data: transformJob(response.data)
-  };
-}
+  export const getJobById = async (id) => {
+    const response = await api.get(`/vagas/${id}`);
+    return {
+      ...response,
+      data: transformJob(response.data)
+    };
+  }
 
-//grupos
-export const getSupportGroups = async () => {
-  const response = await api.get('/grupos');
-  return response;
-}
+  //grupos
+  export const getSupportGroups = async () => {
+    const response = await api.get('/grupos');
+    return response;
+  }
 
-export const getGroupById = async (id) => {
-  const response = await api.get(`/grupos/${id}`);
-  return response;
-}
+  export const getGroupById = async (id) => {
+    const response = await api.get(`/grupos/${id}`);
+    return response;
+  }
 
-export const createGroup = async (data) => {
-  const response = await api.post('/grupos', data);
-  return response;
-}
+  export const createGroup = async (data) => {
+    const response = await api.post('/grupos', data);
+    return response;
+  }
 
-export const editGroup = async (id, data) => {
-  const response = await api.put(`/grupos/${id}`, data);
-  return response;
-}
+  export const editGroup = async (id, data) => {
+    const response = await api.put(`/grupos/${id}`, data);
+    return response;
+  }
 
-export const deleteGroup = async (id) => {
-  const response = await api.delete(`/grupos/${id}`);
-  return response;
-}
+  export const deleteGroup = async (id) => {
+    const response = await api.delete(`/grupos/${id}`);
+    return response;
+  }
 
-//habilidades
-export const getSkills = async () => {
+  //habilidades
+  export const getSkills = async () =>{
   const response = await api.get('/habilidades');
   return response;
 }
